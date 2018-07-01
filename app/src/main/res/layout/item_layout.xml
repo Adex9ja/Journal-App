@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:background="@color/white"
+    android:padding="@dimen/medium">
 
    <LinearLayout
        android:layout_width="match_parent"
@@ -16,16 +17,6 @@
            android:text="Medium Text"
            android:id="@+id/txtTitle"
            android:textStyle="bold"/>
-       <TextView
-           android:id="@+id/optionMenu"
-           android:padding="@dimen/small"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:drawableRight="@drawable/ellipsis"/>
    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Medium Text"
-        android:id="@+id/txtDetail" />
+
 </LinearLayout>

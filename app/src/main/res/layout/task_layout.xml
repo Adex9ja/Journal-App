@@ -26,23 +26,19 @@
             android:id="@+id/txtDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background"
             android:hint="Entry Detail"
            android:inputType="textMultiLine"
-            android:minLines="5"
-            android:maxLines="5"
             android:gravity="start"
             android:layout_marginBottom="@dimen/fab_margin"
             android:drawableTint="@color/colorPrimary"
             android:drawablePadding="@dimen/medium" />
     </android.support.design.widget.TextInputLayout>
 
-    <!--<TimePicker-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/timePicker" />-->
+
 
     <Button
+        android:paddingLeft="@dimen/fab_margin"
+        android:drawableLeft="@android:drawable/ic_input_add"
         android:background="@color/colorPrimaryDark"
         android:textColor="@color/white"
         android:layout_width="match_parent"

@@ -56,7 +56,6 @@ public class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         JournalEntry journalEntry = journalEntryList.get(position);
-        holder.txtDetail.setText(journalEntry.getDetail());
         holder.txtTitle.setText(journalEntry.getTitle());
     }
 
@@ -65,19 +64,20 @@ public class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.MyVi
         return journalEntryList == null ? 0 : journalEntryList.size();
     }
 
-    public  class MyViewHolder extends RecyclerView.ViewHolder implements DatabaseReference.CompletionListener, OnCompleteListener<Void>, PopupMenu.OnMenuItemClickListener, View.OnClickListener {
-        private TextView txtTitle, txtDetail, optionMenu;
+    public  class MyViewHolder extends RecyclerView.ViewHolder implements DatabaseReference.CompletionListener, OnCompleteListener<Void>, PopupMenu.OnMenuItemClickListener {
+        private TextView txtTitle;
         private Dialog dialog;
         public MyViewHolder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.txtTitle);
-            txtDetail = itemView.findViewById(R.id.txtDetail);
-            optionMenu = itemView.findViewById(R.id.optionMenu);
-            optionMenu.setOnClickListener(this);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    viewEntry(journalEntryList.get(getPosition()));
+                    PopupMenu menu = new PopupMenu(context, v);
+                    menu.inflate(R.menu.entry_option_menu);
+                    menu.setOnMenuItemClickListener(MyViewHolder.this);
+                    menu.show();
                 }
             });
         }
@@ -165,12 +165,6 @@ public class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.MyVi
             }
             return true;
         }
-        @Override
-        public void onClick(View v) {
-            PopupMenu menu = new PopupMenu(context, v);
-            menu.inflate(R.menu.entry_option_menu);
-            menu.setOnMenuItemClickListener(this);
-            menu.show();
-        }
+
     }
 }

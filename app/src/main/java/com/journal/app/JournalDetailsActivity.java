@@ -10,17 +10,16 @@ import com.journal.app.utils.JournalEntry;
 public class JournalDetailsActivity extends AppCompatActivity {
 
     private JournalEntry entry;
-    private TextView txtTitle, txtDetail;
+    private TextView  txtDetail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journal_details);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         entry = (JournalEntry)getIntent().getSerializableExtra(getString(R.string.data));
-        txtTitle = findViewById(R.id.txtTitle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(entry.getTitle());
         txtDetail = findViewById(R.id.txtDetail);
         txtDetail.setText(entry.getDetail());
-        txtTitle.setText(entry.getTitle());
     }
 
     @Override
