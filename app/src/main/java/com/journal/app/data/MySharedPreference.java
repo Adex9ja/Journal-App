@@ -24,4 +24,12 @@ public class MySharedPreference {
         editor.putString(context.getString(R.string.loggedInUser), loggedInUser);
         editor.commit();
     }
+
+    public String getUserPin() {
+        return pref.getString(context.getString(R.string.userPin), null);
+    }
+    public void setUserPin(String pin){
+        editor.putString(context.getString(R.string.userPin), pin);
+        editor.commit();
+    }
 }
