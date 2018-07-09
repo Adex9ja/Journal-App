@@ -1,9 +1,11 @@
 package com.journal.app.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import com.elkanahtech.widerpay.myutils.MyHandler;
 import com.elkanahtech.widerpay.myutils.StringUtils;
+import com.elkanahtech.widerpay.myutils.UIKits;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
@@ -57,6 +60,8 @@ public class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         JournalEntry journalEntry = journalEntryList.get(position);
         holder.txtTitle.setText(journalEntry.getTitle());
+        holder.txtDetail.setText(journalEntry.getDetail());
+        holder.txtDate.setText( TextUtils.isEmpty(journalEntry.getPublishedDate())  ? "" : journalEntry.getPublishedDate());
     }
 
     @Override
@@ -64,22 +69,17 @@ public class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.MyVi
         return journalEntryList == null ? 0 : journalEntryList.size();
     }
 
-    public  class MyViewHolder extends RecyclerView.ViewHolder implements DatabaseReference.CompletionListener, OnCompleteListener<Void>, PopupMenu.OnMenuItemClickListener {
-        private TextView txtTitle;
+    public  class MyViewHolder extends RecyclerView.ViewHolder implements DatabaseReference.CompletionListener, OnCompleteListener<Void>, PopupMenu.OnMenuItemClickListener, View.OnClickListener {
+        private TextView txtTitle, txtDetail, optionMenu, txtDate;
         private Dialog dialog;
         public MyViewHolder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.txtTitle);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PopupMenu menu = new PopupMenu(context, v);
-                    menu.inflate(R.menu.entry_option_menu);
-                    menu.setOnMenuItemClickListener(MyViewHolder.this);
-                    menu.show();
-                }
-            });
+            txtDetail = itemView.findViewById(R.id.txtDetail);
+            optionMenu = itemView.findViewById(R.id.optionMenu);
+            txtDate = itemView.findViewById(R.id.txtDate);
+            optionMenu.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         private void editEntry(final JournalEntry journalEntry, final int position) {
@@ -153,18 +153,54 @@ public class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.MyVi
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()){
-                case R.id.view:
-                    viewEntry(journalEntryList.get(getPosition()));
-                    break;
                 case R.id.delete:
-                    deleteEntry(getPosition());
+                    confirmDeletion(getPosition());
                     break;
                 case R.id.edit:
                     editEntry(journalEntryList.get(getPosition()), getPosition());
+                    break;
+                case R.id.share:
+                    UIKits.Companion.shareText(context, journalEntryList.get(getPosition()).getDetail());
                     break;
             }
             return true;
         }
 
+        private void confirmDeletion(final int position) {
+            new AlertDialog.Builder(context)
+                    .setTitle("Confirm Deletion")
+                    .setMessage("Are you sure you want to delete this entry?")
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteEntry(position);
+                        }
+                    })
+                    .show();
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.optionMenu:
+                    showMenu(v);
+                break;
+                default:
+                    viewEntry(journalEntryList.get(getPosition()));
+            }
+        }
+
+        private void showMenu(View v) {
+            PopupMenu menu = new PopupMenu(context, v);
+            menu.inflate(R.menu.entry_option_menu);
+            menu.setOnMenuItemClickListener(MyViewHolder.this);
+            menu.show();
+        }
     }
 }

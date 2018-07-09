@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:padding="@dimen/medium">
+    android:padding="@dimen/small"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
 
    <LinearLayout
        android:layout_width="match_parent"
@@ -17,6 +18,26 @@
            android:text="Medium Text"
            android:id="@+id/txtTitle"
            android:textStyle="bold"/>
+       <TextView
+           android:id="@+id/optionMenu"
+           android:padding="@dimen/small"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:drawableLeft="@drawable/ellipsis"/>
    </LinearLayout>
-
+    <TextView
+        android:id="@+id/txtDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        tools:text="testing detail"/>
+    <TextView
+        android:textStyle="italic"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:gravity="right"
+        android:id="@+id/txtDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        tools:text="2018/02/21"/>
 </LinearLayout>

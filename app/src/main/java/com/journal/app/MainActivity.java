@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +37,9 @@ import com.journal.app.utils.JournalEntry;
 import com.journal.app.data.MyFireBaseHelper;
 import com.journal.app.data.MySharedPreference;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MyHandler handler;
     private MySharedPreference pref;
     private List<JournalEntry> journalEntries;
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd - MMMM, yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pref = new MySharedPreference(this);
         if(pref.getLoggedInUser() == null)
             gotoLogin();
+        else
+            requestPin();
         helper = new MyFireBaseHelper(this);
         handler = new MyHandler(this, false);
         adapter = new EntryListAdapter(this, handler, helper);
@@ -71,6 +77,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadFromLocalDB();
         fetchFromFB();
     }
+
+    private void requestPin() {
+        final String pin = pref.getUserPin();
+        final Dialog dialog = new Dialog(this, R.style.AppTheme);
+        dialog.setContentView(R.layout.pin_entry_layout);
+        final EditText txtPin = dialog.findViewById(R.id.txtPin);
+        final TextView txtEnterPin = dialog.findViewById(R.id.txtEnterPin);
+        FloatingActionButton fab = dialog.findViewById(R.id.fab);
+        if(TextUtils.isEmpty(pin)) txtEnterPin.setText("Create 4-digit Pin");
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validatePin(pin, txtPin.getText().toString(), dialog);
+            }
+        });
+        dialog.setCancelable(false);
+
+        dialog.show();
+
+    }
+
+    private void validatePin(String pin, String pinEntered, Dialog dialog) {
+        if(TextUtils.isEmpty(pin)){
+            pref.setUserPin(pinEntered);
+            dialog.dismiss();
+            requestPin();
+        }else{
+            if(!pin.equals(pinEntered))
+                Toast.makeText(this, "Incorrect Pin!", Toast.LENGTH_SHORT).show();
+            else
+                dialog.dismiss();
+        }
+
+
+    }
+
+
 
     private void fetchFromFB() {
         helper.queryDB(getString(R.string.journal_entity), "userId", pref.getLoggedInUser(), this);
@@ -86,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             entry.setDetail(cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.KEY_DETAIL)));
             entry.setRef(cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.KEY_REF)));
             entry.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.KEY_USER_ID)));
+            entry.setPublishedDate(cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.KEY_DATE)));
             journalEntries.add(entry);
         }
         adapter.swapEntries(journalEntries);
@@ -143,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         entry.setDetail(detail);
         entry.setTitle(title);
         entry.setRef(StringUtils.getTransactionRef());
+        entry.setPublishedDate(sdf.format(new Date()));
         entry.setUserId(pref.getLoggedInUser());
         handler.sendEmptyMessage(0);
         saveEntry(entry);
@@ -155,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         values.put(MyContentProvider.KEY_REF, entry.getRef());
         values.put(MyContentProvider.KEY_TITLE, entry.getTitle());
         values.put(MyContentProvider.KEY_USER_ID, entry.getUserId());
+        values.put(MyContentProvider.KEY_DATE, entry.getPublishedDate());
         getContentResolver().insert(MyContentProvider.CONTENT_URI, values);
         journalEntries.add(entry);
         adapter.swapEntries(journalEntries);
@@ -196,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             value.put(MyContentProvider.KEY_REF, entry.getRef());
             value.put(MyContentProvider.KEY_TITLE, entry.getTitle());
             value.put(MyContentProvider.KEY_USER_ID, entry.getUserId());
+            value.put(MyContentProvider.KEY_DATE, entry.getPublishedDate());
             values.add(value);
         }
         getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI, values.toArray(new ContentValues[]{}));

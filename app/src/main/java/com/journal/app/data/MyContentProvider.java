@@ -15,6 +15,7 @@ public class MyContentProvider extends ContentProvider {
     public  static final String KEY_TITLE = "title";
     public  static final  String KEY_DETAIL = "detail";
     public  static final  String KEY_USER_ID = "userId";
+    public  static final  String KEY_DATE = "publishedDate";
     public  static final  String KEY_REF = "ref";
     public static  final String KEY_ID = "_ID";
     private static final int JOURNAL = 100;
@@ -79,7 +80,7 @@ public class MyContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = myOpenHelper.getWritableDatabase();
-        return db.query(MySqliteOpenHelper.JOURNAL_TABLE,null,selection, selectionArgs,null,null, null);
+        return db.query(MySqliteOpenHelper.JOURNAL_TABLE,null,selection, selectionArgs,null,null, KEY_ID + " DESC");
     }
 
     @Override
@@ -114,6 +115,7 @@ public class MyContentProvider extends ContentProvider {
                 + KEY_ID + " integer primary key autoincrement, "
                 + KEY_TITLE + " text  not null, "
                 + KEY_DETAIL + " text  not null, "
+                + KEY_DATE + " text  , "
                 + KEY_USER_ID + " text  not null, "
                 + KEY_REF + " text  not null, "
                 + " UNIQUE ( "+ KEY_REF +" ) ON CONFLICT REPLACE);");

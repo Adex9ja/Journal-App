@@ -4,9 +4,9 @@
     tools:context="app.qtax.com.activities.cases.CaseActivity">
 
     <item
-        android:id="@+id/view"
+        android:id="@+id/share"
         android:orderInCategory="100"
-        android:title="View"
+        android:title="Share"
         app:showAsAction="never" />
     <item
         android:id="@+id/edit"

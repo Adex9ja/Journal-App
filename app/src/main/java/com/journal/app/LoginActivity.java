@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.elkanahtech.widerpay.myutils.MyHandler;
+import com.elkanahtech.widerpay.myutils.NetworkUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
@@ -63,7 +65,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void attemptLogin() {
-        progress.setVisibility(View.VISIBLE);
-        helper.googleLogin();
+        if(NetworkUtils.isNetworkAvailable(this)){
+            progress.setVisibility(View.VISIBLE);
+            helper.googleLogin();
+        }
+        else
+            Toast.makeText(this, "No Internet connection!", Toast.LENGTH_SHORT).show();
+
+
     }
 }

@@ -15,6 +15,16 @@ public class JournalEntry implements Serializable {
 
     private String userId;
 
+    public String getPublishedDate() {
+        return publishedDate;
+    }
+
+    public void setPublishedDate(String publishedDate) {
+        this.publishedDate = publishedDate;
+    }
+
+    private String publishedDate;
+
     public String getRef() {
         return ref;
     }
